@@ -62,7 +62,7 @@ export default function ChatInput({
   };
 
   return (
-    <div className='absolute bottom-0 left-65 w-319 border-gray-200 bg-[#262626]'>
+    <div className='bottom-0 left-65 w-319 border-gray-200 bg-[#262626]'>
       <form
         onSubmit={onSubmit}
         className='mx-auto max-w-3xl w-full px-4 py-4 flex items-end gap-3'
