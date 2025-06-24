@@ -1,4 +1,4 @@
-// models/Chat.ts
+// models/chat.ts
 import mongoose, { Schema, model, models } from 'mongoose';
 
 const MessageSchema = new Schema({
@@ -25,5 +25,5 @@ const ChatSchema = new Schema(
   }
 );
 
-const Chat = models.Chat || model('Chat', ChatSchema);
+const Chat = models?.Chat || model('Chat', ChatSchema);
 export default Chat;
