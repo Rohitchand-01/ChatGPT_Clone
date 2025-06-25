@@ -1,29 +1,31 @@
-// models/chat.ts
-import mongoose, { Schema, model, models } from 'mongoose';
+import mongoose, { Schema, model, models } from 'mongoose'
 
-const MessageSchema = new Schema({
-  role: {
-    type: String,
-    enum: ['user', 'assistant', 'system'],
-    required: true,
-  },
-  content: {
+const ChatMessagePairSchema = new Schema({
+  user: {
     type: String,
     required: true,
   },
-});
+  assistant: {
+    type: String,
+    required: true,
+  },
+})
 
 const ChatSchema = new Schema(
   {
+    userId: {
+      type: String,
+      required: true,
+    },
     messages: {
-      type: [MessageSchema],
+      type: [ChatMessagePairSchema],
       required: true,
     },
   },
   {
     timestamps: true,
   }
-);
+)
 
-const Chat = models?.Chat || model('Chat', ChatSchema);
-export default Chat;
+const Chat = models?.Chat || model('Chat', ChatSchema)
+export default Chat
