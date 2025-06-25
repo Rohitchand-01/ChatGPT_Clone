@@ -4,27 +4,31 @@ const MessageSchema = new Schema({
   role: {
     type: String,
     enum: ['user', 'assistant', 'system'],
-    required: true,
+    required: true
   },
   content: {
     type: String,
-    required: true,
-  },
+    required: true
+  }
 })
 
 const ChatSchema = new Schema(
   {
     userId: {
       type: String,
-      required: false, // make optional if not using
+      required: false
+    },
+    title: {
+      type: String,
+      required: true
     },
     messages: {
       type: [MessageSchema],
-      required: true,
-    },
+      required: true
+    }
   },
   {
-    timestamps: true,
+    timestamps: true
   }
 )
 

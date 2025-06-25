@@ -1,6 +1,5 @@
 'use client'
 
-import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
 type ChatItem = {
@@ -53,13 +52,13 @@ export default function Sidebar({
         {!collapsed && <h2 className='text-md text-gray-300 px-2 mb-1 mt-5'>Chats</h2>}
         {chats.length > 0 ? (
           chats.map((chat) => (
-            <Link
+            <a
               key={chat._id}
               href={`/chat/${chat._id}`}
-              className='block px-2 py-2 rounded-md text-sm truncate hover:bg-[#262626]'
+              className='block px-2 py-2 rounded-md text-md truncate hover:bg-[#262626]'
             >
               {!collapsed && chat.title}
-            </Link>
+            </a>
           ))
         ) : (
           !collapsed && (
@@ -90,10 +89,10 @@ function SidebarButton({
     'flex items-center gap-3 px-3 py-2 rounded-md hover:bg-[#262626] transition text-white w-full'
   if (href) {
     return (
-      <Link href={href} className={className}>
+      <a href={href} className={className}>
         {icon}
         {!isCollapsed && label}
-      </Link>
+      </a>
     )
   }
   return (
@@ -156,4 +155,3 @@ const GPTsIcon = () => (
     <rect x='3' y='14' width='7' height='7' />
   </svg>
 )
-// Add custom scrollbar styles

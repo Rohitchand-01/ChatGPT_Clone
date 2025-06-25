@@ -3,7 +3,7 @@ import mongoose from 'mongoose'
 const MONGODB_URI = process.env.MONGODB_URI
 
 if (!MONGODB_URI) {
-  throw new Error('⚠️ MONGODB_URI is not defined in .env.local')
+  throw new Error('MONGODB_URI is not defined in .env.local')
 }
 
 interface MongooseGlobal {
@@ -22,22 +22,16 @@ if (!globalWithMongoose.mongoose) {
 let cached = globalWithMongoose.mongoose
 
 export const connectToDB = async () => {
-  if (cached.conn) {
-    return cached.conn
-  }
+  if (cached.conn) return cached.conn
 
   if (!cached.promise) {
     cached.promise = mongoose
       .connect(MONGODB_URI, {
         dbName: 'chatgpt-clone',
-        bufferCommands: false,
+        bufferCommands: false
       })
-      .then((mongoose) => {
-        console.log('✅ MongoDB connected')
-        return mongoose
-      })
-      .catch((error) => {
-        console.error('❌ MongoDB connection error:', error)
+      .then(mongoose => mongoose)
+      .catch(error => {
         throw error
       })
   }
