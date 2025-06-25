@@ -3,6 +3,13 @@
 import { Share1Icon, DotsHorizontalIcon } from '@radix-ui/react-icons'
 import { RiShare2Line } from 'react-icons/ri'
 import { IoIosInformationCircleOutline } from 'react-icons/io'
+import {
+  SignInButton,
+  SignUpButton,
+  SignedIn,
+  SignedOut,
+  UserButton,
+} from '@clerk/nextjs'
 
 export default function Header () {
   return (
@@ -37,12 +44,17 @@ export default function Header () {
 
         <DotsHorizontalIcon className='h-5 w-5 mr-2 ml-2' />
 
-        <div
-          title='User'
-          className='bg-gray-600 text-white text-sm font-medium px-3 py-1 rounded-full'
-        >
-          RC
-        </div>
+        <SignedOut>
+              <SignInButton />
+              <SignUpButton>
+                <button className="bg-[#6c47ff] text-white rounded-full font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 cursor-pointer">
+                  Sign Up
+                </button>
+              </SignUpButton>
+            </SignedOut>
+            <SignedIn>
+              <UserButton />
+            </SignedIn>
       </div>
     </header>
   )
