@@ -1,6 +1,13 @@
 {
   "$schema": "https://turborepo.com/schema.json",
   "ui": "tui",
+  "globalEnv": [
+    "CLOUDINARY_API_SECRET",
+    "CLOUDINARY_API_KEY",
+    "CLOUDINARY_CLOUD_NAME",
+    "MONGODB_URI",
+    "GOOGLE_API_KEY"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],

@@ -10,11 +10,9 @@ export default function ChatPage() {
   const [isLoading, setIsLoading] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement | null>(null)
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!input.trim()) return
-
-    console.log(' Sending user message:', input)
 
     const newMessages = [...messages, { role: 'user', content: input }]
     setMessages(newMessages)
@@ -27,36 +25,15 @@ export default function ChatPage() {
       headers: { 'Content-Type': 'application/json' },
     })
 
-    if (!res.ok || !res.body) {
-      console.error(' Error: Response failed or empty')
+    if (!res.ok) {
+      console.error('Error: Response failed')
       setIsLoading(false)
       return
     }
 
-    const reader = res.body.getReader()
-    const decoder = new TextDecoder()
-    let assistantText = ''
+    const assistantText = await res.text()
 
-    while (true) {
-      const { value, done } = await reader.read()
-      if (done) break
-
-      const chunk = decoder.decode(value, { stream: true })
-      assistantText += chunk
-
-      console.log('Assistant chunk:', chunk)
-
-      setMessages((prev) => {
-        const last = prev[prev.length - 1]
-        if (last?.role === 'assistant') {
-          return [...prev.slice(0, -1), { role: 'assistant', content: last.content + chunk }]
-        } else {
-          return [...prev, { role: 'assistant', content: chunk }]
-        }
-      })
-    }
-
-    console.log(' Final assistant message:', assistantText)
+    setMessages((prev) => [...prev, { role: 'assistant', content: assistantText }])
     setIsLoading(false)
   }
 
@@ -81,7 +58,7 @@ export default function ChatPage() {
         <ChatInput
           className="w-full max-w-xl"
           input={input}
-          onChange={(e) => setInput(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInput(e.target.value)}
           onSubmit={handleSubmit}
           isLoading={isLoading}
         />

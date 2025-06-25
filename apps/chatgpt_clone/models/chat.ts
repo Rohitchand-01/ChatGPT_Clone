@@ -1,11 +1,12 @@
 import mongoose, { Schema, model, models } from 'mongoose'
 
-const ChatMessagePairSchema = new Schema({
-  user: {
+const MessageSchema = new Schema({
+  role: {
     type: String,
+    enum: ['user', 'assistant', 'system'],
     required: true,
   },
-  assistant: {
+  content: {
     type: String,
     required: true,
   },
@@ -15,10 +16,10 @@ const ChatSchema = new Schema(
   {
     userId: {
       type: String,
-      required: true,
+      required: false, // make optional if not using
     },
     messages: {
-      type: [ChatMessagePairSchema],
+      type: [MessageSchema],
       required: true,
     },
   },

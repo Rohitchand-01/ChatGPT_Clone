@@ -1,6 +1,6 @@
 // app/api/history/route.ts
-import { connectToDB } from './../../lib/db'
-import Chat from './../../models/chat'
+import { connectToDB } from '../../../lib/db'
+import Chat from '../../../models/chat'
 import { NextResponse } from 'next/server'
 
 export async function GET() {

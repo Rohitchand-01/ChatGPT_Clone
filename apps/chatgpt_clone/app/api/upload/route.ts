@@ -1,6 +1,6 @@
 // app/api/upload/route.ts
 import { NextResponse } from 'next/server';
-import cloudinary from '../../lib/cloudinary'; // Use alias if set in tsconfig
+import cloudinary from '../../../lib/cloudinary'; // Use alias if set in tsconfig
 import { Readable } from 'stream';
 
 export async function POST(req: Request) {
