@@ -1,9 +1,15 @@
 'use client';
 
+import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
-export default function ChatMessage({ message }: any) {
+type Message = {
+  role: 'user' | 'assistant' | 'system';
+  content: string;
+};
+
+export default function ChatMessage({ message }: { message: Message }) {
   const isUser = message.role === 'user';
 
   return (

@@ -2,63 +2,61 @@
 
 import { useRef, useEffect, useState } from 'react';
 import { GoPlus } from 'react-icons/go';
-import { HiOutlineAdjustmentsHorizontal } from 'react-icons/hi2'; // This icon is imported but not used in the provided code.
+import { HiOutlineAdjustmentsHorizontal } from 'react-icons/hi2';
 import { FiMic } from 'react-icons/fi';
 import { RiVoiceprintFill } from 'react-icons/ri';
 import { FaArrowUp } from 'react-icons/fa';
-import FileUpload from './FileUpload'; // Ensure this path is correct
+import FileUpload from './FileUpload';
+
+interface ChatInputProps {
+  input: string;
+  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  isLoading: boolean;
+}
 
 export default function ChatInput({
   input,
   onChange,
   onSubmit,
   isLoading,
-}: any) {
+}: ChatInputProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const [showAddFilesMenu, setShowAddFilesMenu] = useState(false);
-  const [showFileUploadModal, setShowFileUploadModal] = useState(false); // State to control FileUpload component rendering
-  const [showAddTool, setShowAddTool] = useState(false); // State for the tools dropdown
+  const [showAddFilesMenu, setShowAddFilesMenu] = useState<boolean>(false);
+  const [showFileUploadModal, setShowFileUploadModal] = useState<boolean>(false);
+  const [showAddTool, setShowAddTool] = useState<boolean>(false);
 
-  // Effect to adjust textarea height as input changes
   useEffect(() => {
     if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto'; // Reset height
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`; // Set to scroll height
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
   }, [input]);
 
-  // Handle Enter key for submission, Shift + Enter for new line
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>): void => {
     if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault(); // Prevent default new line
-      onSubmit(e); // Submit the form
+      e.preventDefault();
+      onSubmit(e as unknown as React.FormEvent<HTMLFormElement>);
     }
   };
 
-  // Toggle visibility of the "Add files" dropdown menu
-  const toggleAddFilesMenu = () => {
+  const toggleAddFilesMenu = (): void => {
     setShowAddFilesMenu(prev => !prev);
-    // Close other menus if open to ensure only one dropdown is open at a time
     setShowAddTool(false);
   };
 
-  // Handler for clicking "Add photos and files"
-  const handleAddPhotosAndFilesClick = () => {
-    setShowAddFilesMenu(false); // Close the "Add files" dropdown
-    setShowFileUploadModal(true); // Show the FileUpload modal (which triggers the file picker)
+  const handleAddPhotosAndFilesClick = (): void => {
+    setShowAddFilesMenu(false);
+    setShowFileUploadModal(true);
   };
 
-  // Toggle visibility of the "Tools" dropdown menu
-  const toggleShowAddTool = () => {
+  const toggleShowAddTool = (): void => {
     setShowAddTool(prev => !prev);
-    // Close other menus if open
     setShowAddFilesMenu(false);
   };
 
-  // Function to handle closing the FileUpload modal
-  // This is passed as a prop to FileUpload and is called when a file is selected or the dialog is cancelled.
-  const handleCloseFileUploadModal = () => {
-    setShowFileUploadModal(false); // Hide the FileUpload modal, ensuring it's unmounted
+  const handleCloseFileUploadModal = (): void => {
+    setShowFileUploadModal(false);
   };
 
   return (
@@ -68,13 +66,11 @@ export default function ChatInput({
         className='mx-auto max-w-3xl w-full px-4 py-4 flex items-end gap-3'
       >
         <div className='relative flex-1 bg-[#333333] px-6 pt-4 pb-3 rounded-3xl'>
-          {/* Conditional rendering for the 'Add files' dropdown menu */}
           {showAddFilesMenu && (
             <div
               className='absolute bottom-[50%] left-[20px] max-w-[250px] bg-[#333333] shadow-lg rounded-2xl border border-[#444444] p-3 transition-colors z-10 mb-2'
               id='add files'
             >
-              {/* Option: Add from apps */}
               <div className='flex items-center text-sm gap-1 text-white hover:bg-[#595959] p-1 m-1 rounded-xl cursor-pointer'>
                 <svg
                   width='20'
@@ -100,7 +96,6 @@ export default function ChatInput({
                   <path d='M6.02925 3.02929C6.25652 2.80202 6.60803 2.77382 6.86616 2.94433L6.97065 3.02929L11.4707 7.52929C11.7304 7.78899 11.7304 8.21100 11.4707 8.47070L6.97065 12.9707C6.71095 13.2304 6.28895 13.2304 6.02925 12.9707C5.76955 12.7110 5.76955 12.2890 6.02925 12.0293L10.0585 7.99999L6.02925 3.97070L5.94429 3.86620C5.77378 3.60807 5.80198 3.25656 6.02925 3.02929Z'></path>
                 </svg>
               </div>
-              {/* Option: Add photos and files - directly calls handleAddPhotosAndFilesClick */}
               <div
                 className='text-sm flex items-center gap-1 hover:bg-[#595959] p-1 rounded-2xl px-2 cursor-pointer'
                 onClick={handleAddPhotosAndFilesClick}
@@ -121,7 +116,6 @@ export default function ChatInput({
             </div>
           )}
 
-          {/* Conditional rendering for the 'Tools' dropdown menu */}
           {showAddTool && (
             <div className='absolute bottom-[50%] right-[500px] max-w-[300px] bg-[#333333] shadow-lg rounded-2xl border border-[#444444] p-3 transition-colors z-10 mb-2'>
               <div className='flex items-center text-sm gap-1 text-white hover:bg-[#595959] p-1 m-1 rounded-xl cursor-pointer'>

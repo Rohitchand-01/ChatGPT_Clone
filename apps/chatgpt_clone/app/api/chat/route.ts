@@ -2,9 +2,14 @@ import { connectToDB } from '@/lib/db'
 import Chat from '@/models/chat'
 import { NextRequest } from 'next/server'
 
+type Message = {
+  role: 'user' | 'assistant' | 'system'
+  content: string
+}
+
 export async function POST(req: NextRequest) {
   try {
-    const { messages, chatId } = await req.json()
+    const { messages, chatId }: { messages: Message[]; chatId?: string } = await req.json()
 
     if (!process.env.GOOGLE_API_KEY) {
       console.error('❌ GOOGLE_API_KEY not set in .env')
@@ -33,23 +38,27 @@ export async function POST(req: NextRequest) {
       } else {
         await Chat.create({ messages })
       }
-    } catch (dbError: any) {
-      console.error('❌ MongoDB error:', dbError?.message || dbError)
+    } catch (dbError: unknown) {
+      if (dbError instanceof Error) {
+        console.error('❌ MongoDB error:', dbError.message)
+      } else {
+        console.error('❌ MongoDB error:', dbError)
+      }
     }
 
-    const systemPrompt = {
+    const systemPrompt: Message = {
       role: 'system',
       content: 'You are a helpful AI assistant.',
     }
 
-    const fullMessages = [systemPrompt, ...messages.filter((msg, i, arr) => {
+    const fullMessages: Message[] = [systemPrompt, ...messages.filter((msg, i, arr) => {
       if (msg.role !== 'user') return true
       if (i === 0) return true
       return arr[i - 1].role !== 'user'
     })]
 
     const payload = {
-      contents: fullMessages.map(msg => ({
+      contents: fullMessages.map((msg) => ({
         role: msg.role === 'system' ? 'model' : msg.role,
         parts: [{ text: msg.content }],
       })),
@@ -88,8 +97,12 @@ export async function POST(req: NextRequest) {
       status: 200,
       headers: { 'Content-Type': 'text/plain; charset=utf-8' },
     })
-  } catch (error: any) {
-    console.error('❌ Fatal API Error:', error?.message || error)
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error('❌ Fatal API Error:', error.message)
+    } else {
+      console.error('❌ Fatal API Error:', error)
+    }
     return new Response(JSON.stringify({ error: 'Internal server error' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
