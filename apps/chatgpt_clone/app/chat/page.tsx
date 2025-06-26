@@ -9,6 +9,7 @@ export default function ChatPage () {
   const [messages, setMessages] = useState<{ role: string; content: string }[]>([])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [chatId, setChatId] = useState<string | null>(null)
 
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
@@ -32,11 +33,15 @@ export default function ChatPage () {
       const res = await fetch('/api/chats', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: updatedMessages })
+        body: JSON.stringify({ messages: updatedMessages, chatId })
       })
 
-      const reply = await res.text()
-      setMessages(prev => [...prev, { role: 'assistant', content: reply }])
+      const data = await res.json()
+
+      if (data.chatId) setChatId(data.chatId)
+      if (data.response) {
+        setMessages(prev => [...prev, { role: 'assistant', content: data.response }])
+      }
     } catch (err) {
       console.error('❌ Chat error:', err)
     } finally {
