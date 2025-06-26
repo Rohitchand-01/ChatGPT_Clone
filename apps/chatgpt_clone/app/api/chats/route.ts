@@ -9,10 +9,16 @@ type Message = {
 }
 
 export async function GET(req: NextRequest) {
-  const { userId } = getAuth(req)
+  let userId: string | null = null
+  try {
+    const auth = getAuth(req)
+    userId = auth?.userId || null
+  } catch (err) {
+    console.error('❌ Clerk auth error in GET:', err)
+  }
 
   if (!userId) {
-    return NextResponse.json([], { status: 200 }) // Return empty if no user
+    return NextResponse.json([], { status: 200 }) // return empty list for anonymous user
   }
 
   try {
@@ -21,7 +27,8 @@ export async function GET(req: NextRequest) {
       .sort({ createdAt: -1 })
       .select('_id title createdAt')
     return NextResponse.json(chats)
-  } catch {
+  } catch (err) {
+    console.error('❌ Error in GET /api/chats:', err)
     return NextResponse.json({ error: 'Failed to fetch chats' }, { status: 500 })
   }
 }
@@ -44,7 +51,13 @@ export async function POST(req: NextRequest) {
       })
     }
 
-    const { userId } = getAuth(req)
+    let userId: string | null = null
+    try {
+      const auth = getAuth(req)
+      userId = auth?.userId || null
+    } catch (err) {
+      console.error('❌ Clerk auth error in POST:', err)
+    }
 
     await connectToDB()
 
@@ -90,6 +103,7 @@ export async function POST(req: NextRequest) {
     )
 
     if (!response.ok) {
+      console.error('❌ Gemini API error:', await response.text())
       return new Response(JSON.stringify({ error: 'Gemini API failed' }), {
         status: 500,
         headers: { 'Content-Type': 'application/json' }
@@ -103,7 +117,8 @@ export async function POST(req: NextRequest) {
       status: 200,
       headers: { 'Content-Type': 'text/plain; charset=utf-8' }
     })
-  } catch {
+  } catch (err) {
+    console.error('❌ Error in POST /api/chats:', err)
     return new Response(JSON.stringify({ error: 'Internal server error' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' }
