@@ -3,26 +3,36 @@ import Chat from '@/models/chat'
 import { getAuth } from '@clerk/nextjs/server'
 import { NextRequest, NextResponse } from 'next/server'
 
+export const runtime = 'nodejs'
+
 type Message = {
   role: 'user' | 'assistant' | 'system'
   content: string
 }
 
+// GET: Fetch chats only if user is logged in
 export async function GET(req: NextRequest) {
-  const { userId } = getAuth(req)
-  if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-
   try {
+    const { userId } = getAuth(req)
+
+    if (!userId) {
+      return NextResponse.json([], { status: 200 }) // return empty list if not logged in
+    }
+
     await connectToDB()
+
     const chats = await Chat.find({ userId })
       .sort({ createdAt: -1 })
       .select('_id title createdAt')
+
     return NextResponse.json(chats)
-  } catch {
+  } catch (err) {
+    console.error('GET /api/chats error:', err)
     return NextResponse.json({ error: 'Failed to fetch chats' }, { status: 500 })
   }
 }
 
+// POST: Accepts messages from anyone (logged in or not)
 export async function POST(req: NextRequest) {
   try {
     const { messages, chatId }: { messages: Message[]; chatId?: string } = await req.json()
@@ -42,16 +52,15 @@ export async function POST(req: NextRequest) {
     }
 
     const { userId } = getAuth(req)
-    if (!userId) return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 })
 
     await connectToDB()
 
-    if (chatId) {
+    if (userId && chatId) {
       await Chat.findByIdAndUpdate(chatId, {
         $set: { updatedAt: new Date() },
         $push: { messages: { $each: messages.slice(-2) } }
       })
-    } else {
+    } else if (userId) {
       const title = messages[0]?.content?.slice(0, 30) || 'New Chat'
       await Chat.create({ messages, title, userId })
     }
@@ -101,7 +110,8 @@ export async function POST(req: NextRequest) {
       status: 200,
       headers: { 'Content-Type': 'text/plain; charset=utf-8' }
     })
-  } catch {
+  } catch (err) {
+    console.error('POST /api/chats error:', err)
     return new Response(JSON.stringify({ error: 'Internal server error' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' }
