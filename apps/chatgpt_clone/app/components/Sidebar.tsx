@@ -62,10 +62,10 @@ export default function Sidebar({
       </div>
 
       <SidebarButton icon={<NewChatIcon />} label='New Chat' href='/chat' isCollapsed={collapsed} />
-      <SidebarButton icon={<SearchChatIcon />} label='Search Chat' href='#search' isCollapsed={collapsed} />
-      <SidebarButton icon={<LibraryIcon />} label='Library' href='#library' isCollapsed={collapsed} />
-      <SidebarButton icon={<SoraIcon />} label='Sora' href='#' isCollapsed={collapsed} />
-      <SidebarButton icon={<GPTsIcon />} label='GPTs' href='#' isCollapsed={collapsed} />
+      <SidebarButton icon={<SearchChatIcon />} label='Search Chat' onClick={()=>{alert('this feature will coming soon')}} isCollapsed={collapsed} />
+      <SidebarButton icon={<LibraryIcon />} label='Library' onClick={()=>{alert('this feature will coming soon')}} isCollapsed={collapsed} />
+      <SidebarButton icon={<SoraIcon />} label='Sora' onClick={()=>{alert('this feature will coming soon')}} isCollapsed={collapsed} />
+      <SidebarButton icon={<GPTsIcon />} label='GPTs' onClick={()=>{alert('this feature will coming soon')}} isCollapsed={collapsed} />
 
       <div className='flex-1 mt-2 px-2 overflow-y-auto custom-scrollbar'>
         {!collapsed && <h2 className='text-md text-gray-300 px-2 mb-1 mt-5'>Chats</h2>}
@@ -76,7 +76,7 @@ export default function Sidebar({
               href={`/chat/${chat._id}`}
               className='block px-2 py-2 rounded-md text-sm truncate hover:bg-[#262626]'
             >
-              {!collapsed && ('Chat-'+ chat._id)}
+              {!collapsed && ('Chat'+ chat._id)}
             </Link>
           ))
         ) : (
