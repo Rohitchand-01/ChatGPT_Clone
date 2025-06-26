@@ -49,3 +49,18 @@ body {
   scrollbar-width: thin; /* "auto" (default) or "thin" */
   scrollbar-color: #6d6d6d #3a3a3a; /* thumb color track color */
 }
+
+@keyframes breathing {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+}
+
+.animate-breathing {
+  animation: breathing 1.5s ease-in-out infinite;
+}

@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
     let chat
 
     // Step 1: Create or Update chat
-    if (userId && chatId) {
+    if (chatId) {
       chat = await Chat.findByIdAndUpdate(
         chatId,
         {
@@ -46,10 +46,10 @@ export async function POST(req: NextRequest) {
         },
         { new: true }
       )
-    } else if (userId) {
+    } else {
       const title = message.content.slice(0, 30) || 'New Chat'
       chat = await Chat.create({
-        userId,
+        userId: userId || undefined, // allow guest chat
         title,
         messages: [message]
       })
@@ -85,7 +85,7 @@ export async function POST(req: NextRequest) {
     const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text || '...'
 
     // Step 3: Save assistant reply
-    if (userId && chat?._id) {
+    if (chat?._id) {
       await Chat.findByIdAndUpdate(chat._id, {
         $push: { messages: { role: 'assistant', content: reply } }
       })

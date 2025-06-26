@@ -6,8 +6,11 @@ import { ClerkProvider } from '@clerk/nextjs';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
-  title: 'ChatGPT Clone',
+  title: 'ChatGPT',
   description: 'Built with Vercel AI SDK',
+  icons: {
+    icon: '/logo.png',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

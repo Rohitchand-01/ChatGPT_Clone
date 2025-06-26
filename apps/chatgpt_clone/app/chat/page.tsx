@@ -4,6 +4,7 @@ import { useState, useRef, useLayoutEffect } from 'react'
 import ChatMessage from '../components/ChatMessage'
 import ChatInput from '../components/ChatInput'
 import LayoutWrapper from '../components/LayoutWrapper'
+import TypingLoader from '../components/TypingLoader'
 
 export default function ChatPage() {
   const [messages, setMessages] = useState<{ role: string; content: string }[]>([])
@@ -16,7 +17,7 @@ export default function ChatPage() {
 
   useLayoutEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages])
+  }, [messages, isLoading])
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -60,6 +61,11 @@ export default function ChatPage() {
             {messages.map((msg, i) => (
               <ChatMessage key={i} message={msg} />
             ))}
+            {isLoading && (
+              <div className="flex ml-60">
+                <TypingLoader />
+              </div>
+            )}
             <div ref={bottomRef} />
           </div>
         </div>
