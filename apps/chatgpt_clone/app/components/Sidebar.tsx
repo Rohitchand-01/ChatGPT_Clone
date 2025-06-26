@@ -86,7 +86,7 @@ export default function Sidebar ({
         <SidebarButton
           icon={<NewChatIcon />}
           label='New Chat'
-          onClick={handleNewChat}
+          href='/chat'
           isCollapsed={collapsed}
         />
         <SidebarButton
