@@ -5,7 +5,7 @@ import ChatMessage from '../components/ChatMessage'
 import ChatInput from '../components/ChatInput'
 import LayoutWrapper from '../components/LayoutWrapper'
 
-export default function ChatPage () {
+export default function ChatPage() {
   const [messages, setMessages] = useState<{ role: string; content: string }[]>([])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -22,10 +22,8 @@ export default function ChatPage () {
     e.preventDefault()
     if (!input.trim()) return
 
-    const newUserMessage = { role: 'user', content: input }
-    const updatedMessages = [...messages, newUserMessage]
-
-    setMessages(updatedMessages)
+    const userMessage = { role: 'user', content: input }
+    setMessages(prev => [...prev, userMessage])
     setInput('')
     setIsLoading(true)
 
@@ -33,15 +31,17 @@ export default function ChatPage () {
       const res = await fetch('/api/chats', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: updatedMessages, chatId })
+        body: JSON.stringify({ message: userMessage, chatId })
       })
 
-      const data = await res.json()
-
-      if (data.chatId) setChatId(data.chatId)
-      if (data.response) {
-        setMessages(prev => [...prev, { role: 'assistant', content: data.response }])
+      if (!res.ok) {
+        const errorData = await res.json()
+        throw new Error(errorData.error || 'Failed to fetch assistant response')
       }
+
+      const data = await res.json()
+      setMessages(data.messages)
+      setChatId(data.chatId)
     } catch (err) {
       console.error('❌ Chat error:', err)
     } finally {
@@ -67,6 +67,7 @@ export default function ChatPage () {
         {messages.length === 0 && (
           <div className='text-center mb-10 text-lg'>Let's get started</div>
         )}
+
         <div className='w-full bg-[#262626] z-10 px-4 pb-4'>
           <div className='max-w-3xl mx-auto flex items-center justify-center'>
             <ChatInput
