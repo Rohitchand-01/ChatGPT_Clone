@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
 type ChatItem = {
@@ -19,11 +20,29 @@ export default function Sidebar({
 
   useEffect(() => {
     const fetchChats = async () => {
-      const res = await fetch('/api/chats')
-      if (!res.ok) return
-      const data = await res.json()
-      setChats(data)
+      try {
+        const res = await fetch('/api/chats')
+        if (!res.ok) {
+          console.error('Failed to fetch chats')
+          return
+        }
+        const data = await res.json()
+        const formattedChats = Array.isArray(data)
+          ? data
+          : Array.isArray(data.chats)
+            ? data.chats
+            : []
+        setChats(
+          formattedChats.map((chat: ChatItem) => ({
+            ...chat,
+            title: chat.title || 'Untitled Chat'
+          }))
+        )
+      } catch (error) {
+        console.error('Error fetching chats:', error)
+      }
     }
+
     fetchChats()
   }, [])
 
@@ -52,13 +71,13 @@ export default function Sidebar({
         {!collapsed && <h2 className='text-md text-gray-300 px-2 mb-1 mt-5'>Chats</h2>}
         {chats.length > 0 ? (
           chats.map((chat) => (
-            <a
+            <Link
               key={chat._id}
               href={`/chat/${chat._id}`}
-              className='block px-2 py-2 rounded-md text-md truncate hover:bg-[#262626]'
+              className='block px-2 py-2 rounded-md text-sm truncate hover:bg-[#262626]'
             >
-              {!collapsed && chat.title}
-            </a>
+              {!collapsed && ('Chat-'+ chat._id)}
+            </Link>
           ))
         ) : (
           !collapsed && (
@@ -89,10 +108,10 @@ function SidebarButton({
     'flex items-center gap-3 px-3 py-2 rounded-md hover:bg-[#262626] transition text-white w-full'
   if (href) {
     return (
-      <a href={href} className={className}>
+      <Link href={href} className={className}>
         {icon}
         {!isCollapsed && label}
-      </a>
+      </Link>
     )
   }
   return (
