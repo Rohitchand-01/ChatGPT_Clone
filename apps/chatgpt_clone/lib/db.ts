@@ -30,8 +30,12 @@ export const connectToDB = async () => {
         dbName: 'chatgpt-clone',
         bufferCommands: false
       })
-      .then(mongoose => mongoose)
+      .then(mongoose => {
+        console.log('[DB] Connected to MongoDB')
+        return mongoose
+      })
       .catch(error => {
+        console.error('[DB] Failed to connect to MongoDB:', error)
         throw error
       })
   }
