@@ -9,6 +9,4 @@ export default function Home() {
   useEffect(() => {
     router.push('/chat');
   }, [router]);
-
-  return <div className="p-4 text-white">Redirecting to chat...</div>;
 }

@@ -10,7 +10,10 @@ type Message = {
 
 export async function GET(req: NextRequest) {
   const { userId } = getAuth(req)
-  if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  if (!userId) {
+    return NextResponse.json([], { status: 200 }) // Return empty if no user
+  }
 
   try {
     await connectToDB()
@@ -42,16 +45,15 @@ export async function POST(req: NextRequest) {
     }
 
     const { userId } = getAuth(req)
-    if (!userId) return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 })
 
     await connectToDB()
 
-    if (chatId) {
+    if (userId && chatId) {
       await Chat.findByIdAndUpdate(chatId, {
         $set: { updatedAt: new Date() },
         $push: { messages: { $each: messages.slice(-2) } }
       })
-    } else {
+    } else if (userId) {
       const title = messages[0]?.content?.slice(0, 30) || 'New Chat'
       await Chat.create({ messages, title, userId })
     }
