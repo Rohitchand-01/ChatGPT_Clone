@@ -2,6 +2,8 @@ import { notFound } from 'next/navigation'
 import { connectToDB } from '@/lib/db'
 import Chat from '@/models/chat'
 import { format } from 'date-fns'
+import LayoutWrapper from '../../components/LayoutWrapper'
+import ChatMessage from '../../components/ChatMessage'
 
 interface Props {
   params: { chatId: string }
@@ -17,25 +19,16 @@ export default async function ChatPage({ params }: Props) {
   if (!chat) return notFound()
 
   return (
-    <div className="text-white p-6 max-w-2xl mx-auto space-y-4">
-      <h1 className="text-2xl font-bold mb-2">{chat.title || 'Untitled Chat'}</h1>
-      <p className="text-sm text-gray-400">
-        Created at: {format(new Date(chat.createdAt), 'dd MMM yyyy hh:mm a')}
-      </p>
+    <LayoutWrapper>
+      <div className="flex flex-col h-full bg-[#262626] text-white">
+        <div className="flex-grow min-h-0 overflow-y-auto px-4 md:px-6 py-6 space-y-4 pb-32">
+         
 
-      <div className="mt-6 space-y-4">
-        {chat.messages.map((msg: any, index: number) => (
-          <div
-            key={index}
-            className={`p-4 rounded-md ${
-              msg.role === 'user' ? 'bg-gray-800' : 'bg-[#2c2c2c]'
-            }`}
-          >
-            <p className="text-xs text-gray-400 capitalize mb-1">{msg.role}</p>
-            <p className="whitespace-pre-line">{msg.content}</p>
-          </div>
-        ))}
+          {chat.messages.map((msg: any, index: number) => (
+            <ChatMessage key={index} message={msg} />
+          ))}
+        </div>
       </div>
-    </div>
+    </LayoutWrapper>
   )
 }
